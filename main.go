@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"os"
+	"strings"
 
 	"gitee-play.com/build-service/pkg/git/gitee"
 	go_gitee "gitee-play.com/pkg/gitee"
@@ -11,11 +14,25 @@ import (
 const BuildServiceUserAgent = "Gitee-play/0.0 (main)"
 
 func main() {
-	token := ""
+	token := os.Getenv("GITEE_TOKEN")
+	repoUrl := os.Getenv("REPO_URL")
+
+	parsedUrl, err := url.Parse(repoUrl)
+	if err != nil {
+		panic(err)
+	}
+
+	pos := strings.LastIndex(parsedUrl.Path, "/")
+	if pos == -1 {
+		panic(fmt.Errorf("URL path does not have /."))
+	}
+
+	owner := parsedUrl.Path[0:pos]
+	repoName := parsedUrl.Path[pos+1 : len(parsedUrl.Path)]
 
 	giteeClient := go_gitee.NewClient(go_gitee.Opt{})
 	ctx := context.TODO()
-	repo, _, err := giteeClient.RepositoriesService.Get(ctx, "qicx", "open-ai-window")
+	repo, _, err := giteeClient.RepositoriesService.Get(ctx, owner, repoName)
 	if err != nil {
 		panic(err)
 	}
@@ -24,5 +41,5 @@ func main() {
 
 	client := gitee.NewGiteeClient(token)
 
-	client.EnsurePaCMergeRequest("https://gitee.com/qicx/open-ai-window", nil)
+	client.EnsurePaCMergeRequest(repoUrl, nil)
 }

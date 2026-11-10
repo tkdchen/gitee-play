@@ -21,7 +21,7 @@ type UserContact struct {
 }
 
 type UserProfile struct {
-	Id                *string `json:"id,omitempty"`
+	Id                *int    `json:"id,omitempty"`
 	Login             *string `json:"login,omitempty"`
 	Name              *string `json:"name,omitempty"`
 	AvatarURL         *string `json:"avatar_url,omitempty"`
