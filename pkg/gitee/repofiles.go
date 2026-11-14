@@ -98,13 +98,6 @@ type FileOperationResult struct {
 	Commit  *CreationCommit `json:"commit,omitempty"`
 }
 
-type FileOperationRequestOptions interface {
-	Validate() error
-	ConstructEndpointUrl() string
-	MakeRequestData() map[string]string
-	RequestMethod() string
-}
-
 type FileOperationOptions struct {
 	Owner          string
 	Repository     string
@@ -264,7 +257,7 @@ func (s *RepositoryFilesService) DeleteFile(ctx context.Context, opts *FileDelet
 }
 
 func (s *RepositoryFilesService) operateFile(ctx context.Context, operation string, opts any) (*FileOperationResult, *github.Response, error) {
-	operationRequest, ok := opts.(FileOperationRequestOptions)
+	operationRequest, ok := opts.(RequestDataGenerator)
 	if !ok {
 		return nil, nil, fmt.Errorf("unknown operation '%v'", operation)
 	}

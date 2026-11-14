@@ -11,6 +11,13 @@ import (
 
 const DefaultBaseURL = "https://gitee.com/api/v5/"
 
+type RequestDataGenerator interface {
+	Validate() error
+	ConstructEndpointUrl() string
+	MakeRequestData() map[string]string
+	RequestMethod() string
+}
+
 type CustomClient struct {
 	*github.Client // Drop this one day
 
@@ -21,6 +28,7 @@ type CustomClient struct {
 	RepositoriesService    *MyRepositoriesService
 	RepositoryFilesService *RepositoryFilesService
 	PullRequestsService    *PullRequestsService
+	WebhooksService        *WebhooksService
 }
 
 type Opt struct {
@@ -46,5 +54,6 @@ func NewClient(opt Opt) *CustomClient {
 	c.BranchesService = &BranchesService{client: c}
 	c.RepositoryFilesService = &RepositoryFilesService{client: c}
 	c.PullRequestsService = &PullRequestsService{client: c}
+	c.WebhooksService = &WebhooksService{client: c}
 	return c
 }
