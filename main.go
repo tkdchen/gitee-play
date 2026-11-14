@@ -17,6 +17,14 @@ func main() {
 	token := os.Getenv("GITEE_TOKEN")
 	repoUrl := os.Getenv("REPO_URL")
 
+	if token == "" {
+		panic("GITEE_TOKEN environment variable not set")
+	}
+
+	if repoUrl == "" {
+		panic("REPO_URL environment variable not set")
+	}
+
 	parsedUrl, err := url.Parse(repoUrl)
 	if err != nil {
 		panic(err)
